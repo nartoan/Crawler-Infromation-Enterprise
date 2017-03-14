@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="clawersample" />
+        <module name="Crawler Information Enterprise" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="clawersample" target="1.5" />
+      <module name="Crawler Information Enterprise" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
