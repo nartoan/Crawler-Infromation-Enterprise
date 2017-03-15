@@ -47,13 +47,69 @@ public class ParserPage {
         }
         System.out.println(urls.size());
 
-        GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
+        final GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
 
-        for (String url : urls) {
-            getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
-            if (getInforEnterprise.filter("xuất nhập khẩu"))
-                System.out.println(getInforEnterprise.getEnterprise().getName() + "\n");
-        }
+        Thread thread = new Thread() {
+            public void run() {
+                for (String url : urls.subList(0, (int) (urls.size()/4))) {
+                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    try {
+                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                            System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.start();
+
+
+        Thread thread2 = new Thread() {
+            public void run() {
+                for (String url : urls.subList((int) (urls.size()/4) + 1, (int) urls.size()/2)) {
+                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    try {
+                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                            System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread2.start();
+
+        Thread thread3 = new Thread() {
+            public void run() {
+                for (String url : urls.subList((int) (urls.size()/2) + 1, (int) (3*urls.size()/4))) {
+                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    try {
+                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                            System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread3.start();
+
+        Thread thread4 = new Thread() {
+            public void run() {
+                for (String url : urls.subList(((int) (urls.size()*3/4)), urls.size()-1)) {
+                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    try {
+                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                            System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread4.start();
+
     }
 
     private List<String> getURLDetail(Document document) {

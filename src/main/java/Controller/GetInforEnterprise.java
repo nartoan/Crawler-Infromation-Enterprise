@@ -11,6 +11,7 @@ import java.io.IOException;
  * <p>
  * Get information of Enterprise
  */
+
 public class GetInforEnterprise {
     String url_page = "";
 
@@ -18,7 +19,8 @@ public class GetInforEnterprise {
 
     public static void main(String[] args) throws IOException {
         GetInforEnterprise getInforEnterprise = new GetInforEnterprise("https://thongtindoanhnghiep.co/5200791855-doi-thue-lpx-xa-nghia-loi");
-        getInforEnterprise.parserHtml();
+        //getInforEnterprise.parserHtml();
+        getInforEnterprise.filter("Xuất nhập khẩu");
     }
 
     public GetInforEnterprise() {
@@ -65,8 +67,8 @@ public class GetInforEnterprise {
 
             if (element.select("table tr:last-child ul").text().contains(keyword)) {
                 //Get Time update
-                enterprise.setTimeUpdate(element.select("div div p:last-child").text());
-                System.out.println(enterprise.getTimeUpdate());
+//                enterprise.setTimeUpdate(element.select("div div p:last-child").text());
+//                System.out.println(enterprise.getTimeUpdate());
 
                 //Get tax code
                 element = document.getElementsByClass(
@@ -74,13 +76,13 @@ public class GetInforEnterprise {
                 enterprise.setTaxCode(element.select("table strong").text());
                 System.out.println(enterprise.getTaxCode());
 
-                //get name
-                enterprise.setName(element.select("table tr:nth-child(2) h3").text());
-                System.out.println(enterprise.getName());
-
-                //get type of tax
-                enterprise.setTypeOfTax(element.select("table tr:last-child ul").text());
-                System.out.println(enterprise.getTypeOfTax());
+//                //get name
+//                enterprise.setName(element.select("table tr:nth-child(2) h3").text());
+//                System.out.println(enterprise.getName());
+//
+//                //get type of tax
+//                enterprise.setTypeOfTax(element.select("table tr:last-child ul").text());
+//                System.out.println(enterprise.getTypeOfTax());
 
                 return true;
             }
