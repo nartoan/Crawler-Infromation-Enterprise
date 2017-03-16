@@ -85,7 +85,7 @@ public class ParserPage {
                 for (String url : urls.subList((int) (urls.size()/2) + 1, (int) (3*urls.size()/4))) {
                     getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
                     try {
-                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                        if (getInforEnterprise.filter("Xuất nhập khẩu"))
                             System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -100,7 +100,7 @@ public class ParserPage {
                 for (String url : urls.subList(((int) (urls.size()*3/4)), urls.size()-1)) {
                     getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
                     try {
-                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                        if (getInforEnterprise.filter("Xuất nhập khẩu"))
                             System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
                     } catch (IOException e) {
                         e.printStackTrace();

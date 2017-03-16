@@ -18,7 +18,7 @@ public class GetInforEnterprise {
     Enterprise enterprise;
 
     public static void main(String[] args) throws IOException {
-        GetInforEnterprise getInforEnterprise = new GetInforEnterprise("https://thongtindoanhnghiep.co/5200791855-doi-thue-lpx-xa-nghia-loi");
+        GetInforEnterprise getInforEnterprise = new GetInforEnterprise("https://thongtindoanhnghiep.co/0302183649-cty-tnhh-san-xuat-thuong-mai-huy-hoang");
         //getInforEnterprise.parserHtml();
         getInforEnterprise.filter("Xuất nhập khẩu");
     }
@@ -63,25 +63,27 @@ public class GetInforEnterprise {
         if (url_page != null && !url_page.equals("")) {
 
             Document document = Jsoup.connect(url_page).get();
-            Element element = document.getElementsByClass("col-lg-8 col-md-7").get(0);
+            Element elementTime = document.getElementsByClass("col-lg-8 col-md-7").get(0);
+            Element elementTable =document.getElementsByClass(
+                    "table table-striped table-bordered table-responsive table-details").get(0);
+           // System.out.println(elementTable);
+//            System.out.println(elementTable.select("table tr:last-child ul").text());
 
-            if (element.select("table tr:last-child ul").text().contains(keyword)) {
+            if (elementTable.select("table tr:last-child ul").text().contains(keyword)) {
                 //Get Time update
-//                enterprise.setTimeUpdate(element.select("div div p:last-child").text());
+//                enterprise.setTimeUpdate(elementTime.select("div div p:last-child").text());
 //                System.out.println(enterprise.getTimeUpdate());
 
                 //Get tax code
-                element = document.getElementsByClass(
-                        "table table-striped table-bordered table-responsive table-details").get(0);
-                enterprise.setTaxCode(element.select("table strong").text());
+                enterprise.setTaxCode(elementTable.select("table strong").text());
                 System.out.println(enterprise.getTaxCode());
 
 //                //get name
-//                enterprise.setName(element.select("table tr:nth-child(2) h3").text());
+//                enterprise.setName(elementTable.select("table tr:nth-child(2) h3").text());
 //                System.out.println(enterprise.getName());
 //
 //                //get type of tax
-//                enterprise.setTypeOfTax(element.select("table tr:last-child ul").text());
+//                enterprise.setTypeOfTax(elementTable.select("table tr:last-child ul").text());
 //                System.out.println(enterprise.getTypeOfTax());
 
                 return true;
