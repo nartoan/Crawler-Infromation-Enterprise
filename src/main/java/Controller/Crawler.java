@@ -7,7 +7,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by DucToan on 13/03/2017.
@@ -19,7 +18,7 @@ public class Crawler {
 
     public static void main(String[] args) throws IOException {
         Crawler crawler = new Crawler();
-        crawler.getInforOfProvince(Data.PROVINCE[0],"Xuất nhập khẩu");
+        crawler.getInforOfProvince(Data.PROVINCE[0], "Xuất nhập khẩu");
 
 //        for (String temp : Data.PROVINCE) {
 //            System.out.println("\"" + temp + "\",");
@@ -40,27 +39,37 @@ public class Crawler {
     }
 
     public void getInforOfProvince(final String province, final String keyWord) throws IOException {
-        ArrayList<String> districts = new ArrayList<String>();
+        final ArrayList<String> districts = this.getAllChildOfPlace("/tinh-thanh-pho/" + province, province + "/");
 
-        final ArrayList<String> districtsTemp = this.getAllChildOfPlace("/tinh-thanh-pho/" + province, province + "/");
-        districts.addAll(districtsTemp);
-
-        for (final String district : districtsTemp) {
+        for (final String district : districts) {
             new Thread() {
                 public void run() {
-                    ArrayList<String> villages;
-                    try {
-                        villages = getAllChildOfPlace(province + "/" + district, province + "/" + district + "/");
-                        for (String village : villages) {
-                            new ParserPage(Data.URL_WEB + "/" + province + "/" + district + "/" + village).parser(keyWord);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    getInforOfDistrict(province, district, keyWord);
                 }
             }.start();
         }
     }
+
+    public void getInforOfDistrict(final String province, final String district, final String keyWord) {
+        try {
+            ArrayList<String> villages = getAllChildOfPlace(province + "/" + district, province + "/" + district + "/");
+            for (final String village : villages) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            new ParserPage(Data.URL_WEB + "/" + province + "/" + district + "/" + village).parser(keyWord);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public final ArrayList<String> getAllChildOfPlace(String place, String key) throws IOException {
         ArrayList<String> childOfPlaces = new ArrayList<String>();
