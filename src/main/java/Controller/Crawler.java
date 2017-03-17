@@ -1,4 +1,4 @@
-package Controller;
+﻿package Controller;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,7 +24,7 @@ public class Crawler {
 //        for (String temp : Data.PROVINCE) {
 //            System.out.println("\"" + temp + "\",");
 //        }
-////        ArrayList<String> districts = new ArrayList<String>();
+////      ArrayList<String> districts = new ArrayList<String>();
 //        ArrayList<String> villages = new ArrayList<String>();
 //
 //        for (String province : provinces) {
