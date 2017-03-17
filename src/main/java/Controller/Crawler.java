@@ -7,54 +7,80 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by DucToan on 13/03/2017.
  */
 public class Crawler {
-    private String url_web = "https://thongtindoanhnghiep.co";
-
     public Crawler() {
 
     }
 
     public static void main(String[] args) throws IOException {
         Crawler crawler = new Crawler();
-        ArrayList<String> provinces = crawler.getAllChildOfPlace("", "tinh-thanh-pho/");
-        ArrayList<String> districts = new ArrayList<String>();
-        ArrayList<String> villages = new ArrayList<String>();
+        crawler.getInforOfProvince(Data.PROVINCE[4],"Xuất nhập khẩu");
 
-        for (String province : provinces) {
-            ArrayList<String> districtsTemp = crawler.getAllChildOfPlace("/tinh-thanh-pho/" + province, province + "/");
-            districts.addAll(districtsTemp);
-
-            for(String district : districtsTemp) {
-                villages.addAll(crawler.getAllChildOfPlace(province + "/" + district, province + "/" + district + "/"));
-            }
+        for (String temp : Data.PROVINCE) {
+            System.out.println("\"" + temp + "\",");
         }
-       // crawler.getAllChildOfPlace( "/tinh-thanh-pho/ha-noi", "ha-noi/");
-       // crawler.getAllChildOfPlace("ha-noi/huyen-ba-vi", "ha-noi/huyen-ba-vi/");
+//        ArrayList<String> districts = new ArrayList<String>();
+//        ArrayList<String> villages = new ArrayList<String>();
+//
+//        for (String province : provinces) {
+//            ArrayList<String> districtsTemp = crawler.getAllChildOfPlace("/tinh-thanh-pho/" + province, province + "/");
+//            districts.addAll(districtsTemp);
+//
+//            for(String district : districtsTemp) {
+//                villages.addAll(crawler.getAllChildOfPlace(province + "/" + district, province + "/" + district + "/"));
+//            }
+//        }
+//         crawler.getAllChildOfPlace( "/tinh-thanh-pho/ha-noi", "ha-noi/");
+//         crawler.getAllChildOfPlace("ha-noi/huyen-ba-vi", "ha-noi/huyen-ba-vi/");
     }
 
-    private ArrayList<String> getAllChildOfPlace(String place, String keyWord) throws IOException {
+    public void getInforOfProvince(final String province, final String keyWord) throws IOException {
+        ArrayList<String> districts = new ArrayList<String>();
+
+        final ArrayList<String> districtsTemp = this.getAllChildOfPlace("/tinh-thanh-pho/" + province, province + "/");
+        districts.addAll(districtsTemp);
+
+        for (final String district : districtsTemp) {
+            new Thread() {
+                public void run() {
+                    ArrayList<String> villages = new ArrayList<String>();
+                    try {
+                        villages = getAllChildOfPlace(province + "/" + district, province + "/" + district + "/");
+                        for (String village : villages) {
+                            new ParserPage(Data.URL_WEB + "/" + province + "/" + district + "/" + village).parser(keyWord);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+    }
+
+    public final ArrayList<String> getAllChildOfPlace(String place, String key) throws IOException {
         ArrayList<String> childOfPlaces = new ArrayList<String>();
-        String URL = url_web + ((place == null || place.equals("")) ? "" : ("/" + place));
-        System.out.println(URL);
+        String URL = Data.URL_WEB + ((place == null || place.equals("")) ? "" : ("/" + place));
+//        System.out.println(URL);
         Document document = Jsoup.connect(URL).get();
 
         Elements links = document.getElementsByTag("a");
         for (Element link : links) {
-            if (link.attr("href").contains(keyWord)) {
-                String childOfPlace = link.attr("href").replace("/" + keyWord, "");
+            if (link.attr("href").contains(key)) {
+                String childOfPlace = link.attr("href").replace("/" + key, "");
                 if (!childOfPlaces.contains(childOfPlace)) {
                     childOfPlaces.add(childOfPlace);
                 }
             }
         }
 
-        for (String temp : childOfPlaces) {
-            System.out.println(temp + "\n");
-        }
+//        for (String temp : childOfPlaces) {
+//            System.out.println(temp + "\n");
+//        }
 
         return childOfPlaces;
     }

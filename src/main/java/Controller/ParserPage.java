@@ -22,7 +22,7 @@ public class ParserPage {
         ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/tp-ho-chi-minh/huyen-binh-chanh/xa-binh-hung");
         // ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/tp-ho-chi-minh/huyen-binh-chanh/xa-binh-duong");
         // ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/ha-noi/huyen-thach-that/xa-can-kiem");
-        parserPage.parser();
+        parserPage.parser("Xuất nhập khẩu");
     }
 
     public ParserPage() {
@@ -36,7 +36,7 @@ public class ParserPage {
     }
 
 
-    public void parser() throws IOException {
+    public void parser(final String keyWord) throws IOException {
         Document document = Jsoup.connect(url_page).get();
 
         urls.addAll(getURLDetail(document));
@@ -52,9 +52,9 @@ public class ParserPage {
         Thread thread = new Thread() {
             public void run() {
                 for (String url : urls.subList(0, (int) (urls.size()/4))) {
-                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    getInforEnterprise.setUrl_page(Data.URL_WEB + url);
                     try {
-                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                        if (getInforEnterprise.filter(keyWord))
                             System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -68,9 +68,9 @@ public class ParserPage {
         Thread thread2 = new Thread() {
             public void run() {
                 for (String url : urls.subList((int) (urls.size()/4) + 1, (int) urls.size()/2)) {
-                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    getInforEnterprise.setUrl_page(Data.URL_WEB + url);
                     try {
-                        if (getInforEnterprise.filter("xuất nhập khẩu"))
+                        if (getInforEnterprise.filter(keyWord))
                             System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -83,9 +83,9 @@ public class ParserPage {
         Thread thread3 = new Thread() {
             public void run() {
                 for (String url : urls.subList((int) (urls.size()/2) + 1, (int) (3*urls.size()/4))) {
-                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    getInforEnterprise.setUrl_page(Data.URL_WEB + url);
                     try {
-                        if (getInforEnterprise.filter("Xuất nhập khẩu"))
+                        if (getInforEnterprise.filter(keyWord))
                             System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -98,9 +98,9 @@ public class ParserPage {
         Thread thread4 = new Thread() {
             public void run() {
                 for (String url : urls.subList(((int) (urls.size()*3/4)), urls.size()-1)) {
-                    getInforEnterprise.setUrl_page("https://thongtindoanhnghiep.co/" + url);
+                    getInforEnterprise.setUrl_page(Data.URL_WEB + url);
                     try {
-                        if (getInforEnterprise.filter("Xuất nhập khẩu"))
+                        if (getInforEnterprise.filter(keyWord))
                             System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
                     } catch (IOException e) {
                         e.printStackTrace();
