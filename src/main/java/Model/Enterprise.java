@@ -1,11 +1,8 @@
-package Controller;
-
-import java.util.Date;
-
+package Model;
 /**
  * Created by DucToan on 14/03/2017.
  */
-class Enterprise {
+public class Enterprise {
     private String taxCode;
     private String name;
     private String timeUpdate;
@@ -32,7 +29,7 @@ class Enterprise {
                 ", name='" + name + '\'' +
                 ", timeUpdate=" + timeUpdate +
                 ", typeOfTax='" + typeOfTax + '\'' +
-                '}';
+                "}\n";
     }
 
     public String getTypeOfTax() {

@@ -1,11 +1,10 @@
 package Controller;
 
-import org.jsoup.Jsoup;
+import Model.Data;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +17,8 @@ public class ParserPage {
     private String url_page = "";
     private List<String> urls;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/tp-ho-chi-minh/huyen-binh-chanh/xa-binh-hung");
-        // ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/tp-ho-chi-minh/huyen-binh-chanh/xa-binh-duong");
-        // ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/ha-noi/huyen-thach-that/xa-can-kiem");
         parserPage.parser("Xuất nhập khẩu");
     }
 
@@ -36,92 +33,63 @@ public class ParserPage {
     }
 
 
-    public void parser(final String keyWord) throws IOException {
-        Document document = Jsoup.connect(url_page).get();
-
-        urls.addAll(getURLDetail(document));
-        int count = this.getCountOfPage(document);
-        for (int i = 2; i <= count; i++) {
-            document = Jsoup.connect(url_page + "?p=" + i).get();
+    public void parser(final String keyWord) {
+        Document document = ConnectURL.connect(url_page);
+        if (document != null) {
             urls.addAll(getURLDetail(document));
-        }
-       // System.out.println(urls.size());
+            int count = this.getCountOfPage(document);
+            for (int i = 2; i <= count; i++) {
+                document = ConnectURL.connect(url_page + "?p=" + i);
+                if (document != null)
+                    urls.addAll(getURLDetail(document));
+            }
 
-        final GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
-        if (urls.size() > 500) {
-            Thread thread = new Thread() {
-                public void run() {
-                    for (String url : urls.subList(0, (int) (urls.size() / 4))) {
-                        getInforEnterprise.setUrl_page(Data.URL_WEB +"/" + url);
-                        try {
-                            if (getInforEnterprise.filter(keyWord)) {
-                            }
-                            //   System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
+            final GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
+            if (urls.size() > 500) {
+                Thread thread = new Thread() {
+                    public void run() {
+                        for (String url : urls.subList(0, urls.size() >> 2)) {
+                            getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
+                            getInforEnterprise.filter(keyWord);
                         }
                     }
-                }
-            };
-            thread.start();
+                };
+                thread.start();
 
 
-            Thread thread2 = new Thread() {
-                public void run() {
-                    for (String url : urls.subList((int) (urls.size() / 4) + 1, (int) urls.size() / 2)) {
-                        getInforEnterprise.setUrl_page(Data.URL_WEB +"/" + url);
-                        try {
-                            if (getInforEnterprise.filter(keyWord)) {
-                            }
-                            // System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                Thread thread2 = new Thread() {
+                    public void run() {
+                        for (String url : urls.subList((urls.size() >> 2) + 1, urls.size() >> 1)) {
+                            getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
+                            getInforEnterprise.filter(keyWord);
                         }
                     }
-                }
-            };
-            thread2.start();
+                };
+                thread2.start();
 
-            Thread thread3 = new Thread() {
-                public void run() {
-                    for (String url : urls.subList((int) (urls.size() / 2) + 1, (int) (3 * urls.size() / 4))) {
-                        getInforEnterprise.setUrl_page(Data.URL_WEB +"/" + url);
-                        try {
-                            if (getInforEnterprise.filter(keyWord)) {
-                            }
-                            //System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                Thread thread3 = new Thread() {
+                    public void run() {
+                        for (String url : urls.subList((urls.size() >> 1) + 1, 3 * urls.size() >> 2)) {
+                            getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
+                            getInforEnterprise.filter(keyWord);
                         }
                     }
-                }
-            };
-            thread3.start();
+                };
+                thread3.start();
 
-            Thread thread4 = new Thread() {
-                public void run() {
-                    for (String url : urls.subList(((int) (urls.size() * 3 / 4)), urls.size() - 1)) {
-                        getInforEnterprise.setUrl_page(Data.URL_WEB +"/" + url);
-                        try {
-                            if (getInforEnterprise.filter(keyWord)) {
-                            }
-                            //  System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                Thread thread4 = new Thread() {
+                    public void run() {
+                        for (String url : urls.subList(urls.size() * 3 >> 2, urls.size() - 1)) {
+                            getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
+                            getInforEnterprise.filter(keyWord);
                         }
                     }
-                }
-            };
-            thread4.start();
-        } else {
-            for (String url : urls) {
-                getInforEnterprise.setUrl_page(Data.URL_WEB +"/" + url);
-                try {
-                    if (getInforEnterprise.filter(keyWord)) {
-                    }
-                    //  System.out.println(getInforEnterprise.getEnterprise().getTaxCode() + "\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
+                };
+                thread4.start();
+            } else {
+                for (String url : urls) {
+                    getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
+                    getInforEnterprise.filter(keyWord);
                 }
             }
         }
