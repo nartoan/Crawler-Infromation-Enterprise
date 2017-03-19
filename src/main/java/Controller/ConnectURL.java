@@ -12,12 +12,11 @@ import java.net.SocketTimeoutException;
  * Created by toan on 3/18/2017.
  */
 public class ConnectURL {
-    @org.jetbrains.annotations.Nullable
     public static Document connect(String URL) {
         try {
+           // System.out.println(URL);
             Connection connection = Jsoup.connect(URL)
-                    .userAgent(Data.USER_ARGENT)
-                    .timeout(10000);
+                    .userAgent(Data.USER_ARGENT);
 
             Connection.Response response = connection.execute();
             if (response.statusCode() == 200) {

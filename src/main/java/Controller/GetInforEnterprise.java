@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.Enterprise;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -18,7 +17,7 @@ public class GetInforEnterprise {
     private Enterprise enterprise;
 
     public static void main(String[] args) throws IOException {
-        GetInforEnterprise getInforEnterprise = new GetInforEnterprise("https://thongtindoanhnghiep.co/0302183649-cty-tnhh-san-xuat-thuong-mai-huy-hoang");
+        GetInforEnterprise getInforEnterprise = new GetInforEnterprise("https://thongtindoanhnghiep.co/0105943474-cong-ty-co-phan-thuong-mai-dich-vu-tong-hop-trinh-nguyen");
         //getInforEnterprise.parserHtml();
         getInforEnterprise.filter("Xuất nhập khẩu");
     }
@@ -56,7 +55,8 @@ public class GetInforEnterprise {
                     enterprise.setTypeOfTax(elementTable.select("table tr:last-child ul").text());
 
                     //Print
-                    enterprise.toString();
+//                    System.out.println(url_page);
+                    System.out.println(enterprise.toString());
 
                     return true;
                 }

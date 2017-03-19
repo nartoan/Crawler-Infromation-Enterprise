@@ -24,12 +24,11 @@ public class Enterprise {
 
     @Override
     public String toString() {
-        return "Enterprise{" +
-                "taxCode='" + taxCode + '\'' +
-                ", name='" + name + '\'' +
-                ", timeUpdate=" + timeUpdate +
-                ", typeOfTax='" + typeOfTax + '\'' +
-                "}\n";
+        return "taxCode :" + taxCode + "\n" +
+                "name : " + name + "\n" +
+                "timeUpdate :" + timeUpdate +"\n" +
+                "typeOfTax : " + typeOfTax + "\n" +
+                "\n";
     }
 
     public String getTypeOfTax() {
