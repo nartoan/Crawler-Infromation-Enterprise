@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class ExportToExcel {
 
     public static void main(String[] args) throws IOException {
         ExportToExcel exportToExcel = new ExportToExcel();
-        exportToExcel.exportToFile("/tesst.xlsx");
+        exportToExcel.exportToFile("C:/a/tesst.xlsx");
     }
 
     private void exportToFile(String path_file) throws IOException {
@@ -63,38 +64,36 @@ public class ExportToExcel {
         workbook.close();
     }
 
-    public static void ExportToFileExcel(HashMap<String, CopyOnWriteArrayList<Enterprise>> list, String path_file) {
+    public static void ExportToFileExcel(CopyOnWriteArrayList<Enterprise> enterprises, String province, String district, String village) {
         XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet(village);
+        int rowNum = 0;
+        for (Enterprise enterprise : enterprises) {
+            Row row = sheet.createRow(rowNum++);
+            int colNum = 0;
 
-        Set set = list.entrySet();
-        Iterator i = set.iterator();
-        while (i.hasNext()) {
-            Map.Entry me = (Map.Entry) i.next();
-            XSSFSheet sheet = workbook.createSheet((String) me.getKey());
-
-            CopyOnWriteArrayList<Enterprise> enterprises = (CopyOnWriteArrayList<Enterprise>) me.getValue();
-            int rowNum = 0;
-            for (Enterprise enterprise : enterprises) {
-                Row row = sheet.createRow(rowNum++);
-                int colNum = 0;
-
-                Cell cell = row.createCell(colNum++);
-                cell.setCellValue(enterprise.getTaxCode());
-                cell = row.createCell(colNum++);
-                cell.setCellValue(enterprise.getName());
-                cell = row.createCell(colNum++);
-                cell.setCellValue(enterprise.getTimeUpdate());
-                cell = row.createCell(colNum++);
-                cell.setCellValue(enterprise.getTypeOfTax());
-
-            }
+            Cell cell = row.createCell(colNum++);
+            cell.setCellValue(enterprise.getTaxCode());
+            cell = row.createCell(colNum++);
+            cell.setCellValue(enterprise.getName());
+            cell = row.createCell(colNum++);
+            cell.setCellValue(enterprise.getTimeUpdate());
+            cell = row.createCell(colNum++);
+            cell.setCellValue(enterprise.getTypeOfTax());
         }
 
         try {
-            FileOutputStream outputStream = new FileOutputStream(path_file);
+            if (!new File("C:/" + province).exists())
+                new File("C:/" + province).mkdir();
+
+            if (!new File("C:/" + province + "/" + district).exists())
+                new File("C:/" + province + "/" + district).mkdir();
+
+            FileOutputStream outputStream = new FileOutputStream("C:/" + province + "/" + district + "/" + village + ".xlsx");
             workbook.write(outputStream);
             workbook.close();
             outputStream.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

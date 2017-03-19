@@ -1,16 +1,13 @@
 package Controller;
 
 import Model.Data;
-import Model.Enterprise;
-import Model.ExportToExcel;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by DucToan on 13/03/2017.
@@ -26,48 +23,34 @@ public class Crawler {
     }
 
     public void getInforOfProvince(final String province, final String keyWord) throws IOException {
-        final HashMap<String, CopyOnWriteArrayList<Enterprise>> list =
-                new HashMap<String, CopyOnWriteArrayList<Enterprise>>();
         final ArrayList<String> districts = this.getAllChildOfPlace("/tinh-thanh-pho/" + province, province + "/");
 
         for (final String district : districts) {
-            final Thread tempThread = new Thread() {
+
+            new Thread() {
                 public void run() {
-                    list.put(district, getInforOfDistrict(province, district, keyWord));
+                   getInforOfDistrict(province, district, keyWord);
 //            System.out.println(district);
                 }
-            };
-            tempThread.start();
-            try {
-                tempThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            }.start();
         }
 
-        ExportToExcel.ExportToFileExcel(list, "/" + province + ".xlsx");
+      //  ExportToExcel.ExportToFileExcel(list, "/" + province + ".xlsx");
 
     }
 
-    public CopyOnWriteArrayList<Enterprise> getInforOfDistrict(final String province, final String district, final String keyWord) {
-        final CopyOnWriteArrayList<Enterprise> enterprises = new CopyOnWriteArrayList<Enterprise>();
+    public void getInforOfDistrict(final String province, final String district, final String keyWord) {
         ArrayList<String> villages = getAllChildOfPlace(province + "/" + district, province + "/" + district + "/");
         for (final String village : villages) {
-            Thread temp = new Thread() {
+            new Thread() {
                 @Override
                 public void run() {
-                    enterprises.addAll(new ParserPage(Data.URL_WEB + "/" + province + "/" + district + "/" + village).parser(keyWord));
+                    new ParserPage(Data.URL_WEB + "/" + province + "/" + district + "/" + village)
+                            .parser(keyWord, province, district, village);
 //                    System.out.println(Data.URL_WEB + "/" + province + "/" + district + "/" + village);
                 }
-            };
-            temp.start();
-            try {
-                temp.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            }.start();
         }
-        return enterprises;
     }
 
 

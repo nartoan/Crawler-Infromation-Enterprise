@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,12 +18,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Parser page to get url about detail Enterprise and get all of Page
  */
 public class ParserPage {
+    private CopyOnWriteArrayList<Enterprise> enterprises = new CopyOnWriteArrayList<Enterprise>();
     private String url_page = "";
     private List<String> urls;
 
     public static void main(String[] args) {
-        ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/tp-ho-chi-minh/huyen-binh-chanh/xa-binh-hung");
-        parserPage.parser("Xuất nhập khẩu");
+        ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/ha-nam/thanh-pho-phu-ly/khu-cong-nghiep-chau-son");
+        parserPage.parser("Xuất nhập khẩu", "tp-hcm", "huyen-binh-chanh", "binh-hung");
     }
 
     public ParserPage() {
@@ -36,10 +38,9 @@ public class ParserPage {
     }
 
 
-    public  CopyOnWriteArrayList<Enterprise> parser(final String keyWord) {
+    public void parser(final String keyWord, String province, String district, String village) {
         Document document = ConnectURL.connect(url_page);
         if (document != null) {
-            final CopyOnWriteArrayList<Enterprise> enterprises = new CopyOnWriteArrayList<Enterprise>();
             urls.addAll(getURLDetail(document));
             int count = this.getCountOfPage(document);
             for (int i = 2; i <= count; i++) {
@@ -48,13 +49,16 @@ public class ParserPage {
                     urls.addAll(getURLDetail(document));
             }
 
-            final GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
-            if (urls.size() > 500) {
+            if (urls.size() > 3) {
                 Thread thread = new Thread() {
                     public void run() {
                         for (String url : urls.subList(0, urls.size() >> 2)) {
+                            GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            enterprises.add(getInforEnterprise.filter(keyWord));
+                            Enterprise a = getInforEnterprise.filter(keyWord);
+                            if (a != null) {
+                                enterprises.add(a);
+                            }
                         }
                     }
                 };
@@ -63,8 +67,12 @@ public class ParserPage {
                 Thread thread2 = new Thread() {
                     public void run() {
                         for (String url : urls.subList((urls.size() >> 2) + 1, urls.size() >> 1)) {
+                            GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            enterprises.add(getInforEnterprise.filter(keyWord));
+                            Enterprise a = getInforEnterprise.filter(keyWord);
+                            if (a != null) {
+                                enterprises.add(a);
+                            }
                         }
                     }
                 };
@@ -73,8 +81,12 @@ public class ParserPage {
                 Thread thread3 = new Thread() {
                     public void run() {
                         for (String url : urls.subList((urls.size() >> 1) + 1, 3 * urls.size() >> 2)) {
+                            GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            enterprises.add(getInforEnterprise.filter(keyWord));
+                            Enterprise a = getInforEnterprise.filter(keyWord);
+                            if (a != null) {
+                                enterprises.add(a);
+                            }
                         }
                     }
                 };
@@ -83,8 +95,12 @@ public class ParserPage {
                 Thread thread4 = new Thread() {
                     public void run() {
                         for (String url : urls.subList(urls.size() * 3 >> 2, urls.size() - 1)) {
+                            GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            enterprises.add(getInforEnterprise.filter(keyWord));
+                            Enterprise a = getInforEnterprise.filter(keyWord);
+                            if (a != null) {
+                                enterprises.add(a);
+                            }
                         }
                     }
                 };
@@ -100,14 +116,18 @@ public class ParserPage {
                 }
             } else {
                 for (String url : urls) {
+                    GetInforEnterprise getInforEnterprise = new GetInforEnterprise();
                     getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                    enterprises.add(getInforEnterprise.filter(keyWord));
+                    Enterprise a = getInforEnterprise.filter(keyWord);
+                    if (a != null) {
+                        enterprises.add(a);
+                    }
                 }
             }
-            return enterprises;
+            //Write to excel
+            System.out.println(enterprises);
+            ExportToExcel.ExportToFileExcel(enterprises, province, district , village);
         }
-
-        return null;
     }
 
     private List<String> getURLDetail(Document document) {
