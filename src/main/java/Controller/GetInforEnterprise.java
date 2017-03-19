@@ -56,7 +56,7 @@ public class GetInforEnterprise {
 
                     //Print
 //                    System.out.println(url_page);
-                    System.out.println(enterprise.toString());
+//                    System.out.println(enterprise.toString());
 
                     return enterprise;
                 }

@@ -1,13 +1,11 @@
 package Model;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -64,9 +62,15 @@ public class ExportToExcel {
         workbook.close();
     }
 
-    public static void ExportToFileExcel(CopyOnWriteArrayList<Enterprise> enterprises, String province, String district, String village) {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet(village);
+    public static void ExportToFileExcel(CopyOnWriteArrayList<Enterprise> enterprises, String province, String district, String village) throws IOException, InvalidFormatException {
+        Workbook workbook;
+        if (new File("C:/" + province + "/" + district + ".xlsx").exists()) {
+            FileInputStream inputStream = new FileInputStream(new File("C:/" + province + "/" + district + ".xlsx"));
+            workbook = WorkbookFactory.create(inputStream);
+        } else {
+            workbook = new XSSFWorkbook();
+        }
+        Sheet sheet = workbook.createSheet(village);
         int rowNum = 0;
         for (Enterprise enterprise : enterprises) {
             Row row = sheet.createRow(rowNum++);
@@ -86,10 +90,7 @@ public class ExportToExcel {
             if (!new File("C:/" + province).exists())
                 new File("C:/" + province).mkdir();
 
-            if (!new File("C:/" + province + "/" + district).exists())
-                new File("C:/" + province + "/" + district).mkdir();
-
-            FileOutputStream outputStream = new FileOutputStream("C:/" + province + "/" + district + "/" + village + ".xlsx");
+            FileOutputStream outputStream = new FileOutputStream("C:/" + province + "/" + district + ".xlsx");
             workbook.write(outputStream);
             workbook.close();
             outputStream.close();

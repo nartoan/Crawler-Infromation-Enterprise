@@ -3,11 +3,12 @@ package Controller;
 import Model.Data;
 import Model.Enterprise;
 import Model.ExportToExcel;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,7 +24,7 @@ public class ParserPage {
     private List<String> urls;
 
     public static void main(String[] args) {
-        ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/ha-nam/thanh-pho-phu-ly/khu-cong-nghiep-chau-son");
+        ParserPage parserPage = new ParserPage("https://thongtindoanhnghiep.co/bac-can/thanh-pho-bac-can/xa-bac-kan");
         parserPage.parser("Xuất nhập khẩu", "tp-hcm", "huyen-binh-chanh", "binh-hung");
     }
 
@@ -125,8 +126,16 @@ public class ParserPage {
                 }
             }
             //Write to excel
-            System.out.println(enterprises);
-            ExportToExcel.ExportToFileExcel(enterprises, province, district , village);
+//            System.out.println(enterprises);
+            try {
+                if (!enterprises.isEmpty()) {
+                    ExportToExcel.ExportToFileExcel(enterprises, province, district, village);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidFormatException e) {
+                e.printStackTrace();
+            }
         }
     }
 
