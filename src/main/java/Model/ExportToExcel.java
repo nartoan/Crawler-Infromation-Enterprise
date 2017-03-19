@@ -7,7 +7,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by toan on 3/18/2017.
@@ -58,6 +62,45 @@ public class ExportToExcel {
         workbook.write(outputStream);
         workbook.close();
     }
+
+    public static void ExportToFileExcel(HashMap<String, CopyOnWriteArrayList<Enterprise>> list, String path_file) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        Set set = list.entrySet();
+        Iterator i = set.iterator();
+        while (i.hasNext()) {
+            Map.Entry me = (Map.Entry) i.next();
+            XSSFSheet sheet = workbook.createSheet((String) me.getKey());
+
+            CopyOnWriteArrayList<Enterprise> enterprises = (CopyOnWriteArrayList<Enterprise>) me.getValue();
+            int rowNum = 0;
+            for (Enterprise enterprise : enterprises) {
+                Row row = sheet.createRow(rowNum++);
+                int colNum = 0;
+
+                Cell cell = row.createCell(colNum++);
+                cell.setCellValue(enterprise.getTaxCode());
+                cell = row.createCell(colNum++);
+                cell.setCellValue(enterprise.getName());
+                cell = row.createCell(colNum++);
+                cell.setCellValue(enterprise.getTimeUpdate());
+                cell = row.createCell(colNum++);
+                cell.setCellValue(enterprise.getTypeOfTax());
+
+            }
+        }
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(path_file);
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public ExportToExcel() {
 

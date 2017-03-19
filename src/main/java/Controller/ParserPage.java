@@ -1,12 +1,15 @@
 package Controller;
 
 import Model.Data;
+import Model.Enterprise;
+import Model.ExportToExcel;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by DucToan on 15/03/2017.
@@ -33,9 +36,10 @@ public class ParserPage {
     }
 
 
-    public void parser(final String keyWord) {
+    public  CopyOnWriteArrayList<Enterprise> parser(final String keyWord) {
         Document document = ConnectURL.connect(url_page);
         if (document != null) {
+            final CopyOnWriteArrayList<Enterprise> enterprises = new CopyOnWriteArrayList<Enterprise>();
             urls.addAll(getURLDetail(document));
             int count = this.getCountOfPage(document);
             for (int i = 2; i <= count; i++) {
@@ -50,18 +54,17 @@ public class ParserPage {
                     public void run() {
                         for (String url : urls.subList(0, urls.size() >> 2)) {
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            getInforEnterprise.filter(keyWord);
+                            enterprises.add(getInforEnterprise.filter(keyWord));
                         }
                     }
                 };
                 thread.start();
 
-
                 Thread thread2 = new Thread() {
                     public void run() {
                         for (String url : urls.subList((urls.size() >> 2) + 1, urls.size() >> 1)) {
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            getInforEnterprise.filter(keyWord);
+                            enterprises.add(getInforEnterprise.filter(keyWord));
                         }
                     }
                 };
@@ -71,7 +74,7 @@ public class ParserPage {
                     public void run() {
                         for (String url : urls.subList((urls.size() >> 1) + 1, 3 * urls.size() >> 2)) {
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            getInforEnterprise.filter(keyWord);
+                            enterprises.add(getInforEnterprise.filter(keyWord));
                         }
                     }
                 };
@@ -81,19 +84,30 @@ public class ParserPage {
                     public void run() {
                         for (String url : urls.subList(urls.size() * 3 >> 2, urls.size() - 1)) {
                             getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                            getInforEnterprise.filter(keyWord);
+                            enterprises.add(getInforEnterprise.filter(keyWord));
                         }
                     }
                 };
                 thread4.start();
+
+                try {
+                    thread.join();
+                    thread2.join();
+                    thread3.join();
+                    thread4.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             } else {
                 for (String url : urls) {
                     getInforEnterprise.setUrl_page(Data.URL_WEB + "/" + url);
-                    getInforEnterprise.filter(keyWord);
+                    enterprises.add(getInforEnterprise.filter(keyWord));
                 }
             }
+            return enterprises;
         }
 
+        return null;
     }
 
     private List<String> getURLDetail(Document document) {
@@ -114,6 +128,10 @@ public class ParserPage {
         }
 
         return 0;
+    }
+
+    public final void addElement(Enterprise enterprise) {
+
     }
 
     public String getUrl_page() {

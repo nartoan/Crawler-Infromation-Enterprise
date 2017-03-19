@@ -32,7 +32,7 @@ public class GetInforEnterprise {
         enterprise = new Enterprise();
     }
 
-    public boolean filter(String keyword) {
+    public Enterprise filter(String keyword) {
         if (url_page != null && !url_page.equals("")) {
 
             Document document = ConnectURL.connect(url_page);
@@ -58,11 +58,11 @@ public class GetInforEnterprise {
 //                    System.out.println(url_page);
                     System.out.println(enterprise.toString());
 
-                    return true;
+                    return enterprise;
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public String getUrl_page() {
